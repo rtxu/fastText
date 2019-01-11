@@ -31,9 +31,24 @@ struct entry {
   std::vector<int32_t> subwords;
 };
 
+/*
+ * 词典的构造过程如下:
+ *  1. 从用户输入中逐一读出单词 w
+ *      1.1 查 hash 表，获取 w 在 hash 表中的位置，记为 H(w)
+ *          冲突解决：查找到位置可能已有的其他单词，如果冲突则顺延，直到找到空白位置，
+ *  2. 如果 H(w) 的位置仍无单词占用，则发现新词 w，按照新词发现的顺序，按序记录在词典中
+ *  3. 如果 H(w) 的位置已有词，则累加词频
+ *
+ * 关键数据结构：
+ *  - find(w)：在 hash 表中查找 w 对应的 H(w)
+ *  - word2int_[H(w)]: 将 H(w) 映射为 w 在词典中的位置
+ *  _ words_[i]: 词典中位置为 i 的词条
+ */
 class Dictionary {
  protected:
+  // hash 表大小
   static const int32_t MAX_VOCAB_SIZE = 30000000;
+  // 单行文本最大单词数
   static const int32_t MAX_LINE_SIZE = 1024;
 
   int32_t find(const std::string&) const;
@@ -48,10 +63,14 @@ class Dictionary {
   std::vector<int32_t> word2int_;
   std::vector<entry> words_;
 
+  // cbow 和 skipgram 模型使用，用于对高频词降权
   std::vector<real> pdiscard_;
+
+  // 词典大小，词典里既包含 word 也包含 label
   int32_t size_;
   int32_t nwords_;
   int32_t nlabels_;
+  // input 的 token 数
   int64_t ntokens_;
 
   int64_t pruneidx_size_;
@@ -90,6 +109,7 @@ class Dictionary {
   uint32_t hash(const std::string& str) const;
   void add(const std::string&);
   bool readWord(std::istream&, std::string&) const;
+  // 处理用户输入，构造词典
   void readFromFile(std::istream&);
   std::string getLabel(int32_t) const;
   void save(std::ostream&) const;
