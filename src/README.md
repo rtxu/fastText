@@ -29,10 +29,10 @@ inputs -- hidden -- output
 
 ### 单个样本对模型的更新过程
 
-IN: 输入向量矩阵，IN(i) 表示第 i 个 word 的向量，维度为 nwords x dim
-OUT: 输出向量矩阵，OUT(i) 表示第 i 个 target 的向量。对于 supervised 模型，OUT 的维度为 nlabels x dim；对于 cbow 和 skipgram 模型，OUT 的维度为 nwords x dim
-hidden: 维度为 dim x 1
-output: 维度为 ntargets x 1
+- IN: 输入向量矩阵，IN(i) 表示第 i 个 word 的向量，维度为 nwords x dim
+- OUT: 输出向量矩阵，OUT(i) 表示第 i 个 target 的向量。对于 supervised 模型，OUT 的维度为 nlabels x dim；对于 cbow 和 skipgram 模型，OUT 的维度为 nwords x dim
+- hidden: 维度为 dim x 1
+- output: 维度为 ntargets x 1
 
 1. calc hidden  
 hidden = inputs 向量加和，再按 inputs 大小求平均
