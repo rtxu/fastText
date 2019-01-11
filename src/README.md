@@ -23,9 +23,9 @@ inputs -- hidden -- output
     - cbow 以一行文本中的 (Context(w), w) 作为单个样本，更新模型
     - skipgram 以一行文本中的 (w, Context(w)[i]) 作为单个样本，更新模型
 
-> 单个样本以 (inputs, target) 表示，inputs 为用以计算 hidden 输入，其本身是一个由 wid 组成的序列；target 表示该 inputs 序列要预测的目标
-> Context(w) : 每次在 [1, args-ws] 中随机一个窗口大小 win_size，取 w 周围 win_size 个词作为 Context(w)
-> Context(w)[i] : Context(w) 里面的第 i 个词
+> 单个样本以 (inputs, target) 表示，inputs 为用以计算 hidden 输入，其本身是一个由 wid 组成的序列；target 表示该 inputs 序列要预测的目标  
+> Context(w) : 每次在 [1, args-ws] 中随机一个窗口大小 win_size，取 w 周围 win_size 个词作为 Context(w)  
+> Context(w)[i] : Context(w) 里面的第 i 个词  
 
 ### 单个样本对模型的更新过程
 
