@@ -7,8 +7,9 @@ file: dictionary.cc
 function: readFromFile
 详细过程见 dictionary.h 中的注释
 
-## 2. 构造模型，模型结构
+## 2. 构造模型
 
+模型结构:  
 inputs -- hidden -- output
 
 ## 3. 训练模型 (loss_name: softmax)
@@ -23,7 +24,7 @@ inputs -- hidden -- output
     - cbow 以一行文本中的 (Context(w), w) 作为单个样本，更新模型
     - skipgram 以一行文本中的 (w, Context(w)[i]) 作为单个样本，更新模型
 
-> 单个样本以 (inputs, target) 表示，inputs 为用以计算 hidden 输入，其本身是一个由 wid 组成的序列；target 表示该 inputs 序列要预测的目标  
+> 单个样本以 (inputs, target) 表示，inputs 为 hidden 的输入，其本身是一个由 wid 组成的序列；target 表示该 inputs 序列要预测的目标  
 > Context(w) : 每次在 [1, args-ws] 中随机一个窗口大小 win_size，取 w 周围 win_size 个词作为 Context(w)  
 > Context(w)[i] : Context(w) 里面的第 i 个词  
 
@@ -46,17 +47,38 @@ output = OUT dot hidden = ntargets x dim dot dim x 1 = ntargets x 1
 ```
 for i in ntargets:
     real label = (i == target) ? 1.0 : 0.0;
-    real alpha = lr * (label - output_[i]);  // TODO: 损失函数应该怎么写？为什么可以这么计算梯度？
-    gradient += alpha * OUT(i)
-    OUT(i) += alpha * hidden
+    real alpha = lr * (label - output_[i]); // q1, 见下
+    gradient += alpha * OUT(i)              // q2
+    OUT(i) += alpha * hidden                // q3
 
 ```
 4. gradient 按 inputs 大小求平均
 5. update IN  
 ```
 for i in ninputs:
-    IN(inputs(i)) += gradient
+    IN(inputs(i)) += gradient               // q3
 
 ```
 
-# [TODO] Q2: 不同 loss_function 分别适用什么场景?
+## q1: 损失函数应该怎么写？为什么可以这么计算梯度？
+
+损失函数是交叉熵(cross-entropy)  
+梯度的计算过程见[Softmax 函数的特点和作用是什么？ - 忆臻的回答 - 知乎](https://www.zhihu.com/question/23765351/answer/240869755)
+
+## [TODO] q2: q1 行的代码不是用来计算梯度的么，q2 又是什么?
+
+## [TODO] q3: 为什么可以这么更新 OUT 和 IN?
+
+# Q2: 不同 loss_function 分别适用什么场景?
+
+## softmax 
+
+文本分类，nlabels << nwords
+
+## hs: hierarchy softmax
+
+softmax 的复杂度 O(n)。hierarchy softmax 的复杂度 O(log(n))  
+当输出层 size 越大，hierarchy softmax 对性能的优化越明显。
+
+## [TODO] ns: negative sampling
+
